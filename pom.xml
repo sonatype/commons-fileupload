@@ -274,6 +274,15 @@
     				</lifecycleMappingMetadata>
     			</configuration>
     		</plugin>
+          <plugin>
+            <groupId>com.mycila</groupId>
+            <artifactId>license-maven-plugin</artifactId>
+            <version>3.0</version>
+            <configuration>
+              <skip>true</skip>
+              <failIfMissing>false</failIfMissing>
+            </configuration>
+          </plugin>
     	</plugins>
     </pluginManagement>
   </build>
