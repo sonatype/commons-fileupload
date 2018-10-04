@@ -1,7 +1,7 @@
 library('private-pipeline-library')
 library('jenkins-shared')
 
-mavenReleasePipeline(usePublicSettingsXmlFile: false,
+mavenReleasePipeline(usePublicSettingsXmlFile: true,
         onSuccess: { build, env ->
             notifyChat(env: env, currentBuild: build, room: 'apacheupload-test')
         },
