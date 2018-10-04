@@ -207,6 +207,13 @@
     <public-snapshot.url>
       https://repository.sonatype.org/content/repositories/snapshots
     </public-snapshot.url>
+
+    <!--
+    Staging configuration.
+    -->
+    <staging.serverId>${public.serverId}</staging.serverId>
+    <staging.nexusUrl>${public.nexusUrl}</staging.nexusUrl>
+    <staging.progressTimeout>15</staging.progressTimeout>
   </properties>
 
   <distributionManagement>
@@ -282,6 +289,26 @@
               <mavenExecutorId>forked-path</mavenExecutorId>
               <releaseProfiles>release</releaseProfiles>
               <useReleaseProfile>false</useReleaseProfile>
+            </configuration>
+          </plugin>
+          <!--
+Enhanced deployment configuration.  See 'buildsupport-staging' profile to disable.
+-->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.6</version>
+            <extensions>true</extensions>
+            <configuration>
+              <nexusUrl>${staging.nexusUrl}</nexusUrl>
+              <serverId>${staging.serverId}</serverId>
+              <altStagingDirectory>${staging.directory}</altStagingDirectory>
+              <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
+              <stagingProgressTimeoutMinutes>${staging.progressTimeout}</stagingProgressTimeoutMinutes>
+              <tags>
+                <localUsername>${user.name}</localUsername>
+                <javaVersion>${java.version}</javaVersion>
+              </tags>
             </configuration>
           </plugin>
     		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
