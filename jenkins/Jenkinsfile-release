@@ -7,5 +7,6 @@ mavenReleasePipeline(usePublicSettingsXmlFile: true,
         },
         onFailure: { build, env ->
             notifyChat(env: env, currentBuild: build, room: 'apacheupload-test')
-        }
+        },
+        deployBranch: 'sonatype-release'
 )
