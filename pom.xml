@@ -167,9 +167,9 @@
   </contributors>
 
   <scm>
-    <connection>scm:svn:http://svn.apache.org/repos/asf/commons/proper/fileupload/tags/commons-fileupload-1.3.2</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/commons/proper/fileupload/tags/commons-fileupload-1.3.2</developerConnection>
-    <url>http://svn.apache.org/viewvc/commons/proper/fileupload/tags/commons-fileupload-1.3.2</url>
+    <connection>scm:git:git://github.com/sonatype/commons-fileupload.git</connection>
+    <developerConnection>scm:git:ssh://git@github.com/sonatype/commons-fileupload.git</developerConnection>
+    <url>https://github.com/sonatype/commons-fileupload</url>
   </scm>
   <issueManagement>
     <system>jira</system>
@@ -188,7 +188,45 @@
     <commons.osgi.export>!org.apache.commons.fileupload.util.mime,org.apache.commons.*;version=${project.version};-noimport:=true</commons.osgi.export>
     <commons.osgi.import>!javax.portlet,*</commons.osgi.import>
     <commons.osgi.dynamicImport>javax.portlet</commons.osgi.dynamicImport>
+
+    <localCheckout>true</localCheckout>
+    <pushChanges>false</pushChanges>
+
+    <!--
+    Deployment configuration. Default configuration is public.
+    -->
+    <public.serverId>sonatype-public</public.serverId>
+    <public.nexusUrl>https://repository.sonatype.org</public.nexusUrl>
+
+    <public-release.serverId>${public.serverId}</public-release.serverId>
+    <public-release.url>
+      https://repository.sonatype.org/service/local/staging/deploy/maven2
+    </public-release.url>
+
+    <public-snapshot.serverId>${public.serverId}</public-snapshot.serverId>
+    <public-snapshot.url>
+      https://repository.sonatype.org/content/repositories/snapshots
+    </public-snapshot.url>
+
+    <!--
+    Staging configuration.
+    -->
+    <staging.serverId>${public.serverId}</staging.serverId>
+    <staging.nexusUrl>${public.nexusUrl}</staging.nexusUrl>
+    <staging.progressTimeout>15</staging.progressTimeout>
   </properties>
+
+  <distributionManagement>
+    <repository>
+      <id>${public-release.serverId}</id>
+      <url>${public-release.url}</url>
+    </repository>
+
+    <snapshotRepository>
+      <id>${public-snapshot.serverId}</id>
+      <url>${public-snapshot.url}</url>
+    </snapshotRepository>
+  </distributionManagement>
 
   <dependencies>
     <dependency>
@@ -238,13 +276,41 @@
     </plugins>
     <pluginManagement>
     	<plugins>
-    	    <plugin>
-    	      <groupId>org.apache.maven.plugins</groupId>
-    	      <artifactId>maven-release-plugin</artifactId>
-    	      <configuration>
-    	        <tagBase>https://svn.apache.org/repos/asf/commons/proper/fileupload/tags</tagBase>
-    	      </configuration>
-    	    </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-release-plugin</artifactId>
+            <version>2.5.2</version>
+            <configuration>
+              <goals>deploy</goals>
+              <!-- pushChanges and localCheckout for dvcs and require a 'git push origin \-\-tags :' after release:perform -->
+              <localCheckout>${localCheckout}</localCheckout>
+              <pushChanges>${pushChanges}</pushChanges>
+              <!--  forked path prevents hang see MGPG-9 -->
+              <mavenExecutorId>forked-path</mavenExecutorId>
+              <releaseProfiles>release</releaseProfiles>
+              <useReleaseProfile>false</useReleaseProfile>
+            </configuration>
+          </plugin>
+          <!--
+Enhanced deployment configuration.  See 'buildsupport-staging' profile to disable.
+-->
+          <plugin>
+            <groupId>org.sonatype.plugins</groupId>
+            <artifactId>nexus-staging-maven-plugin</artifactId>
+            <version>1.6.6</version>
+            <extensions>true</extensions>
+            <configuration>
+              <nexusUrl>${staging.nexusUrl}</nexusUrl>
+              <serverId>${staging.serverId}</serverId>
+              <altStagingDirectory>${staging.directory}</altStagingDirectory>
+              <keepStagingRepositoryOnCloseRuleFailure>true</keepStagingRepositoryOnCloseRuleFailure>
+              <stagingProgressTimeoutMinutes>${staging.progressTimeout}</stagingProgressTimeoutMinutes>
+              <tags>
+                <localUsername>${user.name}</localUsername>
+                <javaVersion>${java.version}</javaVersion>
+              </tags>
+            </configuration>
+          </plugin>
     		<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
     		<plugin>
     			<groupId>org.eclipse.m2e</groupId>
