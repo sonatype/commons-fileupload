@@ -3,10 +3,10 @@ library('jenkins-shared')
 
 mavenReleasePipeline(usePublicSettingsXmlFile: true,
         onSuccess: { build, env ->
-            notifyChat(env: env, currentBuild: build, room: 'apacheupload-test')
+            notifyChat(env: env, currentBuild: build, room: 'nexus')
         },
         onFailure: { build, env ->
-            notifyChat(env: env, currentBuild: build, room: 'apacheupload-test')
+            notifyChat(env: env, currentBuild: build, room: 'nexus')
         },
-        deployBranch: 'sonatype-release'
+        deployBranch: 'sonatype-master'
 )
